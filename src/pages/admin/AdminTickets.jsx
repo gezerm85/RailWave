@@ -13,6 +13,7 @@ export default function AdminTickets() {
   }, [user, navigate]);
 
   const fetchTickets = async () => {
+    //NOTE - buraya bilet alan user token gelicek
     const test = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGdtYWlsLmNvbSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzQ0NTM5OTIyLCJleHAiOjE3NDQ2MjYzMjJ9.NJmuWn7jNkaoelTA1ZLN0ImDCkshi0uOqc4p4S8yoVM"
     try {
       const res = await axios.get("http://localhost:8080/tickets/my-tickets", {
@@ -56,7 +57,7 @@ export default function AdminTickets() {
 
   const renderStatus = (status) => {
     if (status === "ACCEPTED") return <span className="text-green-600 font-semibold">✅ Onaylandı</span>;
-    if (status === "PENDING" || status === null) return <span className="text-yellow-600 font-semibold">⏳ Bekliyor</span>;
+    if (status === "PENDING" || status === null) return <span className="text-yellow-600 font-semibold">⏳Onay Bekliyor</span>;
     return <span className="text-gray-500">Bilinmiyor</span>;
   };
 
