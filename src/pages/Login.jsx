@@ -1,19 +1,24 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "react-i18next";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 
 const schema = yup.object().shape({
-  email: yup.string().email("Geçersiz e-posta").required("E-posta zorunlu"),
-  password: yup.string().min(6, "Şifre en az 6 karakter").required("Şifre zorunlu"),
+  email: yup.string().email("auth.invalidEmail").required("auth.emailRequired"),
+  password: yup.string().min(6, "auth.passwordMin").required("auth.passwordRequired"),
 });
 
-export default function Login() {
+export default function Login({ minimal = false }) {
   const { login, isLoggedIn, user, setAuthToken } = useAuth();
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const {
     register,
@@ -23,7 +28,6 @@ export default function Login() {
     resolver: yupResolver(schema),
   });
 
-  // Zaten giriş yapılmışsa role'e göre yönlendir
   useEffect(() => {
     if (isLoggedIn && user) {
       const role = user.role?.toUpperCase();
@@ -41,7 +45,7 @@ export default function Login() {
       });
 
       const token = loginRes.data.token;
-      setAuthToken(token); // token'ı context + axios'a kaydet
+      setAuthToken(token);
 
       const profileRes = await axios.get("http://localhost:8080/users/profile", {
         headers: {
@@ -61,34 +65,51 @@ export default function Login() {
 
     } catch (err) {
       console.error("Giriş hatası:", err);
-      alert("Giriş başarısız. Bilgileri kontrol et.");
+      alert(t("auth.loginFailed"));
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 to-white px-4 py-10">
-      <div className="bg-white shadow-xl rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">Giriş Yap</h2>
+    <div className={`${!minimal ? " flex items-center justify-center px-4 " : ""}`}>
+      <div className=" rounded-lg p-8 w-full max-w-md">
+
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <input
               type="email"
-              placeholder="E-posta"
+              placeholder={t("auth.emailPlaceholder")}
               {...register("email")}
               className="w-full border border-gray-300 rounded px-4 py-2"
             />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+            {errors.email && <p className="text-red-500 text-sm mt-1">{t(errors.email.message)}</p>}
           </div>
 
-          <div>
+          <div className="relative">
             <input
-              type="password"
-              placeholder="Şifre"
+              type={showPassword ? "text" : "password"}
+              placeholder={t("auth.passwordPlaceholder")}
               {...register("password")}
-              className="w-full border border-gray-300 rounded px-4 py-2"
+              className="w-full border border-gray-300 rounded px-4 py-2 pr-10"
             />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute inset-y-0 right-2 flex items-center text-gray-600"
+              tabIndex={-1}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">{t(errors.password.message)}</p>
+            )}
+          </div>
+
+
+          <div className="text-right text-sm">
+            <Link to="/forgot-password" className="text-blue-600 hover:underline">
+              {t("auth.forgotPassword")}
+            </Link>
           </div>
 
           <button
@@ -96,7 +117,7 @@ export default function Login() {
             disabled={isSubmitting}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
           >
-            {isSubmitting ? "Giriş Yapılıyor..." : "Giriş Yap"}
+            {isSubmitting ? t("auth.loggingIn") : t("auth.loginButton")}
           </button>
         </form>
       </div>

@@ -5,16 +5,21 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-const stationSchema = z.object({
-  name: z.string().min(2, "İstasyon adı en az 2 karakter olmalı"),
-  city: z.string().min(2, "Şehir seçimi zorunludur")
-});
+
 
 export default function Stations() {
   const { token, user } = useAuth();
   const navigate = useNavigate();
   const [stations, setStations] = useState([]);
+
+  const { t } = useTranslation();
+
+  const stationSchema = z.object({
+    name: z.string().min(2, { message: t("stations.nameError") }),
+    city: z.string().min(2, { message: t("stations.cityError") })
+  });
 
   const cities = [
     "İstanbul", "Ankara", "İzmir", "Bursa", "Eskişehir", "Konya",
@@ -58,7 +63,7 @@ export default function Stations() {
       reset();
     } catch (err) {
       console.error("İstasyon eklenemedi:", err);
-      alert("İstasyon eklenemedi. Bilgileri kontrol edin.");
+      alert(t("stations.addError"));
     }
   };
 
@@ -70,7 +75,7 @@ export default function Stations() {
       fetchStations();
     } catch (err) {
       console.error("Silme hatası:", err);
-      alert("İstasyon silinemedi.");
+      alert(t("stations.deleteError"));
     }
   };
 
@@ -79,32 +84,32 @@ export default function Stations() {
   const inputStyle = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4 py-10">
+    <div className="min-h-screen  px-4 py-10">
       <h1 className="text-3xl font-bold text-center text-blue-800 mb-10">
-        🚉 İstasyon Yönetimi
+        {t("stations.title")}
       </h1>
 
       <div className="max-w-xl mx-auto">
         <div className={sectionStyle}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">İstasyon Adı</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("stations.nameLabel")}</label>
               <input
                 className={inputStyle}
                 type="text"
-                placeholder="İstasyon Adı"
+                placeholder={t("stations.nameLabel")}
                 {...register("name")}
               />
               {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Şehir</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("stations.cityLabel")}</label>
               <select
                 className={inputStyle}
                 {...register("city")}
               >
-                <option value="">Şehir seç</option>
+                <option value="">{t("stations.cityPlaceholder")}</option>
                 {cities.map((city, index) => (
                   <option key={index} value={city}>{city}</option>
                 ))}
@@ -116,12 +121,12 @@ export default function Stations() {
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
             >
-              ➕ Ekle
+              {t("stations.add")}
             </button>
           </form>
 
           <div className="mt-6">
-            <h3 className="text-md font-semibold text-gray-700 mb-2">📋 Kayıtlı İstasyonlar</h3>
+            <h3 className="text-md font-semibold text-gray-700 mb-2">{t("stations.saved")}</h3>
             {stations.length > 0 ? (
               <ul className="text-sm text-gray-800 list-disc list-inside space-y-1">
                 {stations.map((s) => (
@@ -131,13 +136,13 @@ export default function Stations() {
                       onClick={() => handleDelete(s.id)}
                       className="text-red-600 hover:underline text-xs"
                     >
-                      Sil
+                      {t("stations.delete")}
                     </button>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-gray-500 italic">Henüz istasyon eklenmedi.</p>
+              <p className="text-sm text-gray-500 italic">{t("stations.empty")}</p>
             )}
           </div>
         </div>

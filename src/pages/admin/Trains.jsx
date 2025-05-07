@@ -6,18 +6,24 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
-const trainSchema = z.object({
-  name: z.string().min(2, "Tren adı en az 2 karakter olmalıdır."),
-  seatCount: z
-    .number({ invalid_type_error: "Koltuk sayısı zorunludur." })
-    .min(1, "Koltuk sayısı en az 1 olmalı")
-});
+
+
+
 
 export default function Trains() {
   const { token, user } = useAuth();
   const navigate = useNavigate();
   const [trains, setTrains] = useState([]);
+  const { t } = useTranslation();
+
+  const trainSchema = z.object({
+    name: z.string().min(2, { message: t("trains.nameError") }),
+    seatCount: z
+      .number({ invalid_type_error: t("trains.seatRequired") })
+      .min(1, { message: t("trains.seatMin") })
+  });
 
   const {
     register,
@@ -56,7 +62,7 @@ export default function Trains() {
       reset();
     } catch (err) {
       console.error("Tren eklenemedi:", err);
-      alert("Tren eklenemedi, bilgileri kontrol edin.");
+      alert(t("trains.addError"));
     }
   };
 
@@ -68,7 +74,7 @@ export default function Trains() {
       fetchTrains();
     } catch (err) {
       console.error("Silme hatası:", err);
-      alert("Tren silinemedi.");
+      alert(t("trains.deleteError"));
     }
   };
 
@@ -79,9 +85,9 @@ export default function Trains() {
     "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4 py-10">
+    <div className="min-h-screen  px-4 py-10">
       <h1 className="text-3xl font-bold text-center text-blue-800 mb-10">
-        🚆 Tren Yönetimi
+        {t("trains.title")}
       </h1>
 
       <div className="max-w-xl mx-auto">
@@ -92,7 +98,7 @@ export default function Trains() {
               <input
                 className={inputStyle}
                 type="text"
-                placeholder="Tren Adı"
+                placeholder={t("trains.nameLabel")}
                 {...register("name")}
               />
               {errors.name && (
@@ -101,7 +107,7 @@ export default function Trains() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Koltuk Sayısı</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("trains.seatLabel")}</label>
               <input
                 className={inputStyle}
                 type="number"
@@ -119,28 +125,28 @@ export default function Trains() {
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
             >
-              ➕ Ekle
+              {t("trains.add")}
             </button>
           </form>
 
           <div className="mt-6">
-            <h3 className="text-md font-semibold text-gray-700 mb-2">📋 Kayıtlı Trenler</h3>
+            <h3 className="text-md font-semibold text-gray-700 mb-2">{t("trains.saved")}</h3>
             {trains.length > 0 ? (
               <ul className="text-sm text-gray-800 list-disc list-inside space-y-1">
-                {trains.map((t) => (
-                  <li key={t.id} className="flex justify-between items-center">
-                    <span className={titleStyle}>{t.name} ({t.seatCount} koltuk)</span>
+                {trains.map((item) => (
+                  <li key={item.id} className="flex justify-between items-center">
+                    <span className={titleStyle}>{item.name} ({item.seatCount} {t("trains.seat")})</span>
                     <button
                       onClick={() => handleDeleteTrain(t.id)}
                       className="text-red-600 hover:underline text-xs"
                     >
-                      Sil
+                      {t("trains.delete")}
                     </button>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-sm text-gray-500 italic">Henüz tren eklenmedi.</p>
+              <p className="text-sm text-gray-500 italic">{t("trains.addError")}</p>
             )}
           </div>
         </div>

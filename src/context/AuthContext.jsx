@@ -1,5 +1,7 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 const AuthContext = createContext();
 
@@ -8,6 +10,8 @@ export const AuthProvider = ({ children }) => {
     const stored = localStorage.getItem("user");
     return stored ? JSON.parse(stored) : null;
   });
+
+  const { t } = useTranslation();
 
   const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem("token"));
@@ -89,7 +93,7 @@ export const AuthProvider = ({ children }) => {
   return isReady ? (
     <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
   ) : (
-    <div className="p-10 text-center text-blue-600 font-semibold">Yükleniyor...</div>
+    <div className="p-10 text-center text-blue-600 font-semibold">{t("auth.loading")}</div>
   );
 };
 
