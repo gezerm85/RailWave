@@ -29,7 +29,7 @@ export default function PassengerInfo() {
     );
 
     if (!isValid) {
-      setError(t("passenger.error")); // eksik alan varsa uyarı ver
+      setError(t("passenger.error"));
       return;
     }
 
@@ -52,58 +52,65 @@ export default function PassengerInfo() {
       </p>
     );
   }
+
   const totalPrice = journey.price * passengers;
+
   return (
     <div className="min-h-screen px-4 py-10">
-      <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow-xl">
+      <div className="max-w-screen-xl mx-auto bg-white/50 p-6 rounded-xl shadow-xl">
         <h2 className="text-2xl font-bold mb-6 text-blue-800 text-center">
           🧍‍♂️ {t("passenger.title")}
         </h2>
 
         <p className="mb-6 text-gray-600 text-center">
           {journey.departureStation?.city} → {journey.arrivalStation?.city} <br />
-          {t("passenger.time")}: {journey.departureTime} → {journey.arrivalTime} <br />
-          {t("passenger.price")}: <strong>{totalPrice}₺</strong>
+          {t("passenger.time")} : {journey.departureTime} → {journey.arrivalTime} <br />
+          {t("passenger.price")} : <strong>{totalPrice}₺</strong>
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {passengerList.map((p, i) => (
-            <div key={i} className="border border-gray-300 p-4 rounded-lg">
-              <h3 className="font-semibold mb-2">
-                {t("ticket.passenger")} {i + 1} — {t("passenger.seat")}: {seats[i]}
-              </h3>
-              <input
-                type="text"
-                placeholder={t("passenger.name")}
-                value={p.name}
-                onChange={(e) =>
-                  updatePassenger(i, { ...p, name: e.target.value })
-                }
-                required
-                className="w-full mb-2 px-3 py-2 border rounded"
-              />
-              <input
-                type="text"
-                placeholder={t("passenger.surname")}
-                value={p.surname}
-                onChange={(e) =>
-                  updatePassenger(i, { ...p, surname: e.target.value })
-                }
-                required
-                className="w-full mb-2 px-3 py-2 border rounded"
-              />
-              <input
-                type="email"
-                placeholder={t("passenger.email")}
-                value={p.email}
-                onChange={(e) =>
-                  updatePassenger(i, { ...p, email: e.target.value })
-                }
-                required
-                className="w-full px-3 py-2 border rounded"
-              />
-            </div>
-          ))}
+          <div className="grid grid-cols-3 gap-6">
+            {passengerList.map((p, i) => (
+              <div
+                key={i}
+                className="bg-white border border-gray-300 shadow-md h-full p-4 rounded-lg flex flex-col"
+              >
+                <h3 className="font-semibold mb-2">
+                  {t("ticket.passenger")} {i + 1} — {t("passenger.seat")} : {seats[i]}
+                </h3>
+                <input
+                  type="text"
+                  placeholder={t("passenger.name")}
+                  value={p.name}
+                  onChange={(e) =>
+                    updatePassenger(i, { ...p, name: e.target.value })
+                  }
+                  required
+                  className="w-full mb-2 px-3 py-2 border rounded focus:outline-none focus:border-blue-500"
+                />
+                <input
+                  type="text"
+                  placeholder={t("passenger.surname")}
+                  value={p.surname}
+                  onChange={(e) =>
+                    updatePassenger(i, { ...p, surname: e.target.value })
+                  }
+                  required
+                  className="w-full mb-2 px-3 py-2 border rounded focus:outline-none focus:border-blue-500"
+                />
+                <input
+                  type="email"
+                  placeholder={t("passenger.email")}
+                  value={p.email}
+                  onChange={(e) =>
+                    updatePassenger(i, { ...p, email: e.target.value })
+                  }
+                  required
+                  className="w-full px-3 py-2 border rounded focus:outline-none focus:border-blue-500"
+                />
+              </div>
+            ))}
+          </div>
 
           {error && (
             <p className="text-red-500 text-sm text-center">{error}</p>
@@ -120,4 +127,3 @@ export default function PassengerInfo() {
     </div>
   );
 }
-  

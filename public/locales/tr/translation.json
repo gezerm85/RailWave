@@ -118,6 +118,7 @@
     "success": "Ödeme Başarılı!",
     "redirecting": "Bilet sayfasına yönlendiriliyorsunuz...",
     "invalidPhone": "Lütfen geçerli bir telefon numarası girin (05xxxxxxxxx)",
+    "invalidExpiry": "Geçersiz son kullanma tarihi",
     "missingInfo": "Eksik bilgi! Lütfen baştan rezervasyon yapın.",
     "error": "Ödeme işlemi sırasında bir hata oluştu."
   },

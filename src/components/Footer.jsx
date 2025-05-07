@@ -46,7 +46,7 @@ export default function Footer() {
           </h3>
           <div className="flex gap-4 text-xl">
             <a
-              href="https://www.instagram.com/railwave?igsh=dW1yNGVnbWFuaTcz"
+              href="https://www.facebook.com/share/15FDyLR1ry/?mibextid=wwXIfr"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-blue-600"
@@ -54,7 +54,7 @@ export default function Footer() {
               <FaFacebookF />
             </a>
             <a
-              href="https://www.facebook.com/share/15FDyLR1ry/?mibextid=wwXIfr"
+              href="https://www.instagram.com/railwave?igsh=dW1yNGVnbWFuaTcz"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-pink-500"

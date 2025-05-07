@@ -13,9 +13,7 @@ export default function Payment() {
   const { state } = useLocation();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  // artık tek seat/passenger değil, array olarak alıyoruz:
   const { journey, seats = [], passengerList = [] } = state || {};
-  // context'ten token'ı alıyoruz:
   const { token, addTicket } = useAuth();
 
   const [cardNumber, setCardNumber] = useState("");
@@ -26,6 +24,8 @@ export default function Payment() {
   const [showCvv, setShowCvv] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedCouponId, setSelectedCouponId] = useState("");
+  const [expiryError, setExpiryError] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   if (!journey || !seats.length || !passengerList.length) {
     return (
@@ -42,7 +42,6 @@ export default function Payment() {
   ];
   const selectedCoupon = coupons.find(c => c.id === selectedCouponId);
 
-  // kişi başı price değil, toplam:
   const originalTotal = journey.price * seats.length;
   let finalTotal = originalTotal;
   if (selectedCoupon && originalTotal >= selectedCoupon.minAmount) {
@@ -57,6 +56,100 @@ export default function Payment() {
     return cleaned.length < 3
       ? cleaned
       : cleaned.slice(0, 2) + "/" + cleaned.slice(2);
+  };
+
+  const fakeCards = [
+    {
+      number: "1111222233334444",
+      cvv: "123",
+      expiry: "12/30",
+      name: "Rabianur Aygün",
+      type: "success"
+    },
+    {
+      number: "5555666677778888",
+      cvv: "456",
+      expiry: "11/25",
+      name: "Hatice Yaren Bulut",
+      type: "insufficient"
+    }
+  ];
+
+  const handlePayment = async e => {
+    e.preventDefault();
+    setErrorMessage("");
+
+    const sanitizedCard = cardNumber.replace(/\s/g, "");
+    const found = fakeCards.find(
+      c => c.number === sanitizedCard && c.cvv === cvv && c.expiry === expiry
+    );
+
+    if (!found) {
+      setErrorMessage("Geçersiz kart. Lütfen bilgilerinizi kontrol edin.");
+      return;
+    }
+    if (found.type === "insufficient") {
+      setErrorMessage("Bakiye yetersiz. Lütfen başka bir kart deneyin.");
+      return;
+    }
+    setCardName(found.name);
+
+    if (!/^05\d{9}$/.test(phone)) {
+      alert(t("payment.invalidPhone"));
+      return;
+    }
+    if (selectedCoupon && originalTotal < selectedCoupon.minAmount) {
+      alert(t("coupons.notEligible"));
+      return;
+    }
+    if (!isValidExpiryDate(expiry)) {
+      setExpiryError(t("payment.invalidExpiry"));
+      return;
+    }
+
+    try {
+      const payload = seats.map(seatNum => ({
+        tripId: journey.id,
+        seatNumber: seatNum
+      }));
+      const res = await axios.post(
+        "http://localhost:8080/tickets/multiple",
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+      const tickets = res.data;
+      tickets.forEach((ticket, idx) => {
+        const passenger = passengerList[idx];
+        addTicket({
+          id: ticket.id,
+          from: journey.departureStation.name,
+          to: journey.arrivalStation.name,
+          time: journey.departureTime,
+          seat: ticket.seatNumber,
+          passenger,
+          date: journey.departureDate
+        });
+        const perPerson = finalTotal / seats.length;
+        sendEmail(ticket, ticket.seatNumber, journey, passenger, perPerson);
+      });
+      setShowModal(true);
+      setTimeout(() => {
+        navigate("/ticket", {
+          state: {
+            journey,
+            seats,
+            passengerList,
+            ticketIds: tickets.map(t => t.id)
+          }
+        });
+      }, 2500);
+    } catch {
+      alert(t("payment.error"));
+    }
   };
 
   const sendEmail = (ticket, seatNum, trip, passenger, paidAmount) => {
@@ -78,78 +171,33 @@ export default function Payment() {
         },
         "37vW3bnuTXN7vrb1D"
       )
-      .then(res => console.log("✅ Mail gönderildi:", res.text))
-      .catch(err => console.error("❌ Mail gönderilemedi:", err));
+      .then()
+      .catch();
   };
 
-  const handlePayment = async e => {
-    e.preventDefault();
-    if (!/^05\d{9}$/.test(phone)) {
-      alert(t("payment.invalidPhone"));
-      return;
+  const isValidExpiryDate = value => {
+    const [month, year] = value.split("/");
+    if (!month || !year || month.length !== 2 || year.length !== 2) return false;
+    const monthNum = parseInt(month, 10);
+    const yearNum = parseInt("20" + year, 10);
+    if (isNaN(monthNum) || isNaN(yearNum) || monthNum < 1 || monthNum > 12) {
+      return false;
     }
-    if (selectedCoupon && originalTotal < selectedCoupon.minAmount) {
-      alert(t("coupons.notEligible"));
-      return;
-    }
-
-    try {
-  
-      const payload = seats.map(seatNum => ({
-        tripId: journey.id,
-        seatNumber: seatNum
-      }));
-
-      const res = await axios.post(
-        "http://localhost:8080/tickets/multiple",
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
-
-      const tickets = res.data; 
-
-      
-      tickets.forEach((ticket, idx) => {
-        const passenger = passengerList[idx];
-        addTicket({
-          id: ticket.id,
-          from: journey.departureStation.name,
-          to: journey.arrivalStation.name,
-          time: journey.departureTime,
-          seat: ticket.seatNumber,
-          passenger,
-          date: journey.departureDate
-        });
-        // kişi başı ödeneni hesaplarsın:
-        const perPerson = finalTotal / seats.length;
-        sendEmail(ticket, ticket.seatNumber, journey, passenger, perPerson);
-      });
-
-      setShowModal(true);
-      setTimeout(() => {
-        navigate("/ticket", {
-          state: {
-            ticketId: tickets[0].id,
-            journey,
-            seat: tickets[0].seatNumber,
-            passenger: passengerList[0],
-            pnr: tickets[0].id,
-            userCount: seats.length
-          }
-        });
-      }, 2500);
-    } catch (err) {
-      console.error("❌ Çoklu bilet oluşturulamadı:", err);
-      alert(t("payment.error"));
-    }
+    const now = new Date();
+    const currentMonth = now.getMonth() + 1;
+    const currentYear = now.getFullYear();
+    if (yearNum < currentYear) return false;
+    if (yearNum === currentYear && monthNum < currentMonth) return false;
+    return true;
   };
 
   return (
     <div className="min-h-screen px-4 py-10">
+      {errorMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+          {errorMessage}
+        </div>
+      )}
       <div className="max-w-xl mx-auto bg-white/80 backdrop-blur-lg p-8 rounded-xl shadow-2xl">
         <h2 className="text-3xl font-bold text-blue-800 text-center mb-2">
           {t("payment.title")}
@@ -157,7 +205,6 @@ export default function Payment() {
         <p className="text-center text-gray-600 mb-6">
           {t("payment.subtitle")}
         </p>
-
         <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4 shadow-sm">
           <h3 className="text-md font-semibold text-gray-800 mb-1">
             {t("payment.journey")}
@@ -187,20 +234,18 @@ export default function Payment() {
               <span>{originalTotal}₺</span>
             )}
           </p>
-
           <h3 className="text-md font-semibold text-gray-800 mt-4 mb-1">
             {t("payment.passengers")}
           </h3>
           <ul className="list-disc list-inside space-y-1">
             {passengerList.map((p, i) => (
               <li key={i} className="text-sm text-gray-700">
-                {t("payment.passenger")} {i + 1}: {p.name} {p.surname} — {p.email} —{" "}
-                {t("payment.seat")}: {seats[i]}
+                {t("payment.passenger")} {i + 1}: {p.name} {p.surname} —{" "}
+                {p.email} — {t("payment.seat")}: {seats[i]}
               </li>
             ))}
           </ul>
         </div>
-
         <div className="flex flex-col space-y-2 mb-6">
           <label className="text-sm font-medium text-gray-700">
             {t("coupons.chooseCoupon")}
@@ -221,13 +266,11 @@ export default function Payment() {
             <p className="text-sm text-red-600">{t("coupons.notEligible")}</p>
           )}
         </div>
-
         <div className="flex justify-center mb-6">
           <div className={styles["flip-card"]}>
             <div className={styles["flip-card-inner"]}>
               <div className={styles["flip-card-front"]}>
                 <p className={styles["heading_8264"]}>MASTERCARD</p>
-                {/* SVG logo */}
                 <svg
                   className={styles["logo"]}
                   xmlns="http://www.w3.org/2000/svg"
@@ -252,9 +295,7 @@ export default function Payment() {
                   {cardNumber || "0000 0000 0000 0000"}
                 </p>
                 <p className={styles["date_8264"]}>{expiry || "MM/YY"}</p>
-                <p className={styles["name"]}>
-                  {cardName || t("payment.defaultName")}
-                </p>
+                <p className={styles["name"]}>{cardName || t("payment.defaultName")}</p>
               </div>
               <div className={styles["flip-card-back"]}>
                 <div className={styles["strip"]}></div>
@@ -266,7 +307,6 @@ export default function Payment() {
             </div>
           </div>
         </div>
-
         <form onSubmit={handlePayment} className="space-y-4">
           <div className="flex flex-col space-y-2">
             <label className="text-sm font-medium text-gray-700">
@@ -321,6 +361,9 @@ export default function Payment() {
                 required
                 className="w-full border border-gray-500 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400"
               />
+              {expiryError && (
+                <p className="text-red-600 text-sm">{t("payment.invalidExpiry")}</p>
+              )}
             </div>
             <div className="flex-1 flex flex-col space-y-2 relative">
               <label className="text-sm font-medium text-gray-700">

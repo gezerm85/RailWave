@@ -124,8 +124,8 @@
     "logout": "Logout"
   },
   "payment": {
-    "title": "Payment Screen",
-    "subtitle": "Please enter your payment details",
+    "title": "Payment Page",
+    "subtitle": "Please enter your payment information",
     "journey": "Journey Details",
     "departureTime": "Departure Time",
     "arrivalTime": "Arrival Time",
@@ -134,14 +134,15 @@
     "passengers": "Number of Passengers",
     "seat": "Seat Number:",
     "cardNumber": "Card Number",
-    "cardName": "Cardholder Name",
+    "cardName": "Name on Card",
     "expiry": "Expiry Date",
     "cvv": "CVV",
     "payNow": "Pay Now",
     "success": "Payment Successful!",
-    "redirecting": "Redirecting to your ticket...",
-    "invalidPhone": "Please enter a valid phone number (starts with 05)",
-    "missingInfo": "Missing information! Please restart the reservation.",
+    "redirecting": "Redirecting to the ticket page...",
+    "invalidPhone": "Please enter a valid phone number (05xxxxxxxxx)",
+    "invalidExpiry": "Invalid expiry date",
+    "missingInfo": "Missing information! Please start the booking process again.",
     "error": "An error occurred during the payment process."
   },
   "coupons": {
