@@ -46,7 +46,7 @@ export default function Footer() {
           </h3>
           <div className="flex gap-4 text-xl">
             <a
-              href="#"
+              href="https://www.instagram.com/railwave?igsh=dW1yNGVnbWFuaTcz"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-blue-600"
