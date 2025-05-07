@@ -50,7 +50,7 @@ export default function MyTickets() {
 
   const renderStatus = (status) => {
     if (status === "ACCEPTED") return <span className="text-green-600">{t("tickets.accepted")}</span>;
-    if (status === "PENDING" || status === null) return <span className="text-yellow-600">{t("tickets.accepted")}</span>;
+    if (status === "PENDING" || status === null) return <span className="text-green-600">{t("tickets.accepted")}</span>;
     return <span className="text-gray-500">{t("tickets.unknown")}</span>;
   };
 

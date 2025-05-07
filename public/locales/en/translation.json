@@ -143,7 +143,9 @@
     "invalidPhone": "Please enter a valid phone number (05xxxxxxxxx)",
     "invalidExpiry": "Invalid expiry date",
     "missingInfo": "Missing information! Please start the booking process again.",
-    "error": "An error occurred during the payment process."
+    "error": "An error occurred during the payment process.",
+    "invalidCard": "Invalid card. Please check your details.",
+    "insufficientFunds": "Insufficient funds. Please try another card."
   },
   "coupons": {
     "chooseCoupon": "Select a Coupon (Optional)",

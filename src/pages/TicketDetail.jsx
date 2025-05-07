@@ -124,7 +124,7 @@ export default function TicketDetail() {
 
   const renderStatus = () => {
     if (ticket.status === "ACCEPTED") return <span className="text-green-600 font-semibold">{t("ticket.statusAccepted")}</span>;
-    if (ticket.status === "PENDING" || ticket.status === null) return <span className="text-yellow-600 font-semibold">{t("ticket.statusAccepted")}</span>;
+    if (ticket.status === "PENDING" || ticket.status === null) return <span className="text-green-600 font-semibold">{t("ticket.statusAccepted")}</span>;
     return <span className="text-gray-500">{t("ticket.statusUnknown")}</span>;
   };
 

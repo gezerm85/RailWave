@@ -120,7 +120,9 @@
     "invalidPhone": "Lütfen geçerli bir telefon numarası girin (05xxxxxxxxx)",
     "invalidExpiry": "Geçersiz son kullanma tarihi",
     "missingInfo": "Eksik bilgi! Lütfen baştan rezervasyon yapın.",
-    "error": "Ödeme işlemi sırasında bir hata oluştu."
+    "error": "Ödeme işlemi sırasında bir hata oluştu.",
+    "invalidCard": "Geçersiz kart. Lütfen bilgilerinizi kontrol edin.",
+    "insufficientFunds": "Bakiye yetersiz. Lütfen başka bir kart deneyin."
   },
   "profile": {
     "title": "Profil Bilgileri",

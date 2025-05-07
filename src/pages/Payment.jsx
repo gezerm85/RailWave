@@ -85,11 +85,11 @@ export default function Payment() {
     );
 
     if (!found) {
-      setErrorMessage("Geçersiz kart. Lütfen bilgilerinizi kontrol edin.");
+      setErrorMessage(t("payment.invalidCard"));
       return;
     }
     if (found.type === "insufficient") {
-      setErrorMessage("Bakiye yetersiz. Lütfen başka bir kart deneyin.");
+      setErrorMessage(t("payment.insufficientFunds"));
       return;
     }
     setCardName(found.name);
