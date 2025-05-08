@@ -155,8 +155,8 @@ export default function Payment() {
   const sendEmail = (ticket, seatNum, trip, passenger, paidAmount) => {
     emailjs
       .send(
-        "service_g71k7sx",
-        "template_sourp6k",
+        "service_xpa8d6k",
+        "template_ogd71zb",
         {
           user_name: `${passenger.name} ${passenger.surname}`,
           user_email: passenger.email,
@@ -169,7 +169,7 @@ export default function Payment() {
           pnr: ticket.id,
           paid_amount: `${paidAmount}₺`,
         },
-        "37vW3bnuTXN7vrb1D"
+        "rKdcfd9B19xh1cXKX"
       )
       .then()
       .catch();

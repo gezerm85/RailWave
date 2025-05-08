@@ -23,15 +23,15 @@ export default function Support() {
   
     emailjs
       .send(
-        "service_g71k7sx",
-        "template_c471cn8",
+        "service_pi4sill",
+        "template_s8bd4ck",
         {
           from_name: form.name,
           from_email: form.email,
           phone: form.phone,        
           message: form.message,
         },
-        "37vW3bnuTXN7vrb1D"
+        "dIkoCzQIUIDRnhyh3"
       )
       .then(() => {
         setShowModal(true);

@@ -60,7 +60,7 @@ export default function AdminTickets() {
 
       await emailjs.send(
         "service_qc0vmaa",
-        "template_zvezolf",
+        "service_pi4sill",
         {
           to_name: `${ticket.user.firstName} ${ticket.user.lastName}`,
           to_email: ticket.user.email,
@@ -71,7 +71,7 @@ export default function AdminTickets() {
           price: ticket.trip.price,
           message: t("adminTickets.emailMessage"),
         },
-        "V8FK0Tg5-SPgKTUED"
+        "dIkoCzQIUIDRnhyh3"
       );
 
       const stored = JSON.parse(localStorage.getItem("refundedTickets")) || [];
