@@ -91,12 +91,12 @@
     "login": "Giriş",
     "register": "Kayıt Ol",
     "hello": "👋 Merhaba",
-    "adminPanel": "Admin Panel",
+    "adminPanel": "Admin",
     "stations": "İstasyonlar",
     "trains": "Trenler",
     "trips": "Seferler",
     "ticketControl": "Bilet Kontrol",
-    "staff": "Personel",
+    "staff": "Müdür",
     "myTickets": "Biletlerim",
     "logout": "Çıkış"
   },
@@ -276,6 +276,7 @@
   },
   "adminDashboard": {
     "title": "Yönetim Paneli",
+    "manager": "Müdür Paneli",
     "stations": "İstasyonlar",
     "trains": "Trenler",
     "tickets": "Biletler",

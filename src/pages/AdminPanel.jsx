@@ -10,8 +10,10 @@ import {
   CartesianGrid,
 } from "recharts";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../context/AuthContext";
 
 export default function AdminDashboard() {
+    const { user } = useAuth();
   const [counts, setCounts] = useState({
     stations: 0,
     trains: 0,
@@ -31,12 +33,17 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [stationRes, trainRes, tickets, tripRes] = await Promise.all([
+        const [stationRes, trainRes, tickets, tripRes,] = await Promise.all([
           axios.get(`${API}/stations/`),
           axios.get(`${API}/trains/`),
           axios.get(`${API}/tickets/`),
           axios.get(`${API}/trips/`),
+ 
         ]);
+
+
+      console.log();
+      
 
         setCounts({
           stations: stationRes.data.length,
@@ -116,7 +123,8 @@ export default function AdminDashboard() {
   return (
     <div className="min-h-screen  px-6 py-10">
       <h1 className="text-3xl font-bold text-center text-blue-800 mb-8">
-         {t("adminDashboard.title")}
+      {user?.role === "ADMIN" ? t("adminDashboard.title") : t("adminDashboard.manager")}
+
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-10">

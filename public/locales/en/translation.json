@@ -114,12 +114,12 @@
     "login": "Login",
     "register": "Register",
     "hello": "👋 Hello",
-    "adminPanel": "Admin Panel",
+    "adminPanel": "Admin",
     "stations": "Stations",
     "trains": "Trains",
     "trips": "Trips",
     "ticketControl": "Ticket Check",
-    "staff": "Staff",
+    "staff": "Manager",
     "myTickets": "My Tickets",
     "logout": "Logout"
   },
@@ -273,6 +273,7 @@
   },
   "adminDashboard": {
     "title": "Admin Dashboard",
+    "manager": "Manager Dashboard",
     "stations": "Stations",
     "trains": "Trains",
     "tickets": "Tickets",
